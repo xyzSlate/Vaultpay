@@ -7,7 +7,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.nicholas.vaultpay.model.User
 
-@Database(entities = [User::class], version = 2, exportSchema = false)
+@Database(entities = [User::class], version = 1, exportSchema = false)
 abstract class UserDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
@@ -20,10 +20,8 @@ abstract class UserDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     UserDatabase::class.java,
-                    "user_database"
-                )
-                    .fallbackToDestructiveMigration() // DANGEROUS IN PRODUCTION, OK FOR NOW
-                    .build()
+                    "vaultpay_database"
+                ).build()
                 INSTANCE = instance
                 instance
             }

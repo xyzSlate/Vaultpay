@@ -1,4 +1,4 @@
-package com.nicholas.vaultpay.ui.screens
+package com.nicholas.vaultpay.ui.screens.about
 
 
 import androidx.compose.runtime.Composable

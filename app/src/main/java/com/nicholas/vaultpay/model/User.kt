@@ -9,7 +9,5 @@ data class User(
     val username: String,
     val email: String,
     val password: String,
-    val role: String // "admin" or "user"
+    val role: String
 )
-
-

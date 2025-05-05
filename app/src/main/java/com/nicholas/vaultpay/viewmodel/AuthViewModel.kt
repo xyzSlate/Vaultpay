@@ -1,5 +1,3 @@
-package com.nicholas.vaultpay.viewmodel
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nicholas.vaultpay.model.User

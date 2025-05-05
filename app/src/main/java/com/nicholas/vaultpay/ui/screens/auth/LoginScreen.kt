@@ -1,11 +1,11 @@
 package com.nicholas.vaultpay.ui.screens.auth
 
+import AuthViewModel
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,11 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.nicholas.vaultpay.R
-
+import com.nicholas.vaultpay.navigation.ROUT_ABOUT
+import com.nicholas.vaultpay.navigation.ROUT_HOME
 import com.nicholas.vaultpay.navigation.ROUT_REGISTER
-import com.nicholas.vaultpay.viewmodel.AuthViewModel
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextFieldDefaults
+import com.nicholas.vaultpay.ui.theme.Purple80
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     authViewModel: AuthViewModel,
@@ -48,107 +52,124 @@ fun LoginScreen(
             if (user == null) {
                 Toast.makeText(context, "Invalid Credentials", Toast.LENGTH_SHORT).show()
             } else {
-                if (user.role == "admin") {
-                    navController.navigate(ROUT_ITEM) {
-                    }
+                if (user.role == "user") {
+                    navController.navigate(ROUT_HOME)
                 } else {
-                    navController.navigate(ROUT_DASHBOARD) {
-                    }
+                    navController.navigate(ROUT_ABOUT)
                 }
             }
         }
     }
-//End of login logic
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(brush = Brush.verticalGradient(colors = listOf(Color(0xFF00C6FF), Color(0xFF0072FF))))
+            .padding(20.dp)
     ) {
-        // Animated Welcome Text
-        AnimatedVisibility(
-            visible = true,
-            enter = fadeIn(animationSpec = tween(1000)),
-            exit = fadeOut(animationSpec = tween(1000))
-        ) {
-            Text(
-                text = "Welcome Back!",
-                fontSize = 40.sp,
-                fontFamily = FontFamily.Cursive
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Email Input
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "Email Icon") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Password Input with Show/Hide Toggle
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = "Password Icon") },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            trailingIcon = {
-                val image = if (passwordVisible) painterResource(R.drawable.visibility) else painterResource(R.drawable.visibilityoff)
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(image, contentDescription = if (passwordVisible) "Hide Password" else "Show Password")
-                }
-            }
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Gradient Login Button
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(Color(0xFF00C6FF), Color(0xFF0072FF))
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ),
-            contentAlignment = Alignment.Center
+                .align(Alignment.Center)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = {
-                    if (email.isBlank() || password.isBlank()) {
-                        Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show()
-                    } else {
-                        authViewModel.loginUser(email, password)
+            // Animated Welcome Text
+            AnimatedVisibility(
+                visible = true,
+                enter = fadeIn(animationSpec = tween(1000)),
+                exit = fadeOut(animationSpec = tween(1000))
+            ) {
+                Text(
+                    text = "Welcome Back!",
+                    fontSize = 36.sp,
+                    fontFamily = FontFamily.Serif,
+                    color = Purple80,
+                    modifier = Modifier.padding(bottom = 20.dp)
+                )
+            }
+
+            // Email Input
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email", color = Color.Black) },
+                leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "Email Icon", tint = Color.Gray) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+                    .background(Color.White, RoundedCornerShape(12.dp)),
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(0xFF0072FF),
+                    unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f),
+                    focusedTextColor = Color.Black,
+
+                )
+            )
+
+            // Password Input with Show/Hide Toggle
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password", color = Color.Black) },
+                leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = "Password Icon", tint = Color.Gray) },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp)
+                    .background(Color.White, RoundedCornerShape(12.dp)),
+                shape = RoundedCornerShape(12.dp),
+                trailingIcon = {
+                    val image = if (passwordVisible) painterResource(R.drawable.visibilityoff1) else painterResource(R.drawable.visibility1)
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(image, contentDescription = if (passwordVisible) "Hide Password" else "Show Password", modifier = Modifier.size(20.dp))
                     }
                 },
-                modifier = Modifier.fillMaxSize(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                shape = RoundedCornerShape(12.dp)
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(0xFF0072FF),
+                    unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f),
+
+
+                )
+            )
+
+            // Gradient Login Button
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(Color(0xFF00C6FF), Color(0xFF0072FF))
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                Text("Login", color = Color.White)
+                Button(
+                    onClick = {
+                        if (email.isBlank() || password.isBlank()) {
+                            Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show()
+                        } else {
+                            authViewModel.loginUser(email, password)
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Login", color = Color.White)
+                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Register Navigation Button
-        TextButton(onClick = { navController.navigate(ROUT_REGISTER) }) {
-            Text("Don't have an account? Register")
+            // Register Navigation Button
+            TextButton(onClick = { navController.navigate(ROUT_REGISTER) }) {
+                Text("Don't have an account? Register", color = Color.White)
+            }
         }
     }
 }

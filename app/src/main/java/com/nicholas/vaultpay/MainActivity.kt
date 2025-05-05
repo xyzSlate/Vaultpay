@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.nicholas.vaultpay.navigation.AppNavHost
 import com.nicholas.vaultpay.ui.theme.VaultPayTheme
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,3 +26,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    VaultPayTheme {
+        Greeting("Android")
+    }
+}

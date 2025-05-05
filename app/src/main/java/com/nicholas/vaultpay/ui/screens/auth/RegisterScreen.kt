@@ -1,5 +1,6 @@
 package com.nicholas.vaultpay.ui.screens.auth
 
+import AuthViewModel
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -7,9 +8,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -17,22 +18,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.nicholas.vaultpay.R
 import com.nicholas.vaultpay.model.User
+import com.nicholas.vaultpay.navigation.ROUT_HOME
 import com.nicholas.vaultpay.navigation.ROUT_LOGIN
-import com.nicholas.vaultpay.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,64 +47,83 @@ fun RegisterScreen(
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
+    var role by remember { mutableStateOf("user") }
     val context = LocalContext.current
     val animatedAlpha by animateFloatAsState(
         targetValue = 1f,
-        animationSpec = tween(durationMillis = 1500, easing = LinearEasing),
-        label = "Animated Alpha"
+        animationSpec = tween(durationMillis = 1500, easing = LinearEasing)
+    )
+    val roleOptions = listOf("user", "admin")
+    var expanded by remember { mutableStateOf(false) }
+
+    // Gradient Background
+    val backgroundBrush = Brush.verticalGradient(
+        colors = listOf(Color(0xFF6A11CB), Color(0xFF2575FC))
     )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(backgroundBrush) // Gradient background
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Animated Title
         AnimatedVisibility(visible = true, enter = fadeIn(), exit = fadeOut()) {
             Text(
-                "Create Your Account",
-                fontSize = 40.sp,
-                fontFamily = FontFamily.Cursive
+                text = "Create Your Account",
+                fontSize = 36.sp,
+                fontFamily = FontFamily.Cursive,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        //Username
+        // Username Input with Shadow and Rounded Corners
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
             label = { Text("Username") },
             leadingIcon = { Icon(Icons.Filled.Person, contentDescription = "Username Icon") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(8.dp, shape = RoundedCornerShape(12.dp)),
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF2575FC),
+                unfocusedBorderColor = Color.Black
+            )
         )
-        //End of username
 
+        Spacer(modifier = Modifier.height(16.dp))
 
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        //Email
+        // Email Input with Shadow and Rounded Corners
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
             leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "Email Icon") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(8.dp, shape = RoundedCornerShape(12.dp)),
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF2575FC),
+                unfocusedBorderColor = Color.Black
+            )
         )
-        //End of email
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-
-        //Role
-        var role by remember { mutableStateOf("user") }
-        val roleOptions = listOf("user", "admin")
-        var expanded by remember { mutableStateOf(false) }
-
+        // Role Dropdown with Shadow and Rounded Corners
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
@@ -115,7 +134,16 @@ fun RegisterScreen(
                 readOnly = true,
                 label = { Text("Select Role") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor().fillMaxWidth()
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+                    .shadow(8.dp, shape = RoundedCornerShape(12.dp)),
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    containerColor = Color.Transparent,
+                    focusedBorderColor = Color(0xFF2575FC),
+                    unfocusedBorderColor = Color.Black
+                )
             )
             ExposedDropdownMenu(
                 expanded = expanded,
@@ -132,14 +160,10 @@ fun RegisterScreen(
                 }
             }
         }
-        //End of role
 
+        Spacer(modifier = Modifier.height(16.dp))
 
-
-
-
-
-        // Password Input Field with Show/Hide Toggle
+        // Password Input with Show/Hide Toggle
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -147,18 +171,26 @@ fun RegisterScreen(
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = "Password Icon") },
             trailingIcon = {
-                val image = if (passwordVisible) painterResource(R.drawable.visibility)  else painterResource(R.drawable.visibilityoff)
+                val image = if (passwordVisible) painterResource(R.drawable.visibility1) else painterResource(R.drawable.visibilityoff1)
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(image, contentDescription = if (passwordVisible) "Hide Password" else "Show Password")
+                    Icon(image, contentDescription = if (passwordVisible) "Hide Password" else "Show Password",modifier = Modifier.size(20.dp))
                 }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(8.dp, shape = RoundedCornerShape(12.dp)),
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF2575FC),
+                unfocusedBorderColor = Color.Black
+            )
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Confirm Password Input Field with Show/Hide Toggle
+        // Confirm Password Input with Show/Hide Toggle
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
@@ -166,17 +198,26 @@ fun RegisterScreen(
             visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = "Confirm Password Icon") },
             trailingIcon = {
-                val image = if (confirmPasswordVisible) painterResource(R.drawable.visibility)  else painterResource(R.drawable.visibilityoff)
+                val image = if (confirmPasswordVisible) painterResource(R.drawable.visibility1) else painterResource(R.drawable.visibilityoff1)
                 IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
-                    Icon(image, contentDescription = if (confirmPasswordVisible) "Hide Password" else "Show Password")
+                    Icon(image, contentDescription = if (confirmPasswordVisible) "Hide Password" else "Show Password",modifier = Modifier.size(20.dp))
                 }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(8.dp, shape = RoundedCornerShape(12.dp)),
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF2575FC),
+                unfocusedBorderColor = Color.Black
+            )
         )
 
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
+        // Register Button with Gradient and Shadow
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -185,8 +226,9 @@ fun RegisterScreen(
                     brush = Brush.horizontalGradient(
                         colors = listOf(Color(0xFF00C6FF), Color(0xFF0072FF))
                     ),
-                    shape = MaterialTheme.shapes.medium
-                ),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .shadow(8.dp, shape = RoundedCornerShape(12.dp)),
             contentAlignment = Alignment.Center
         ) {
             Button(
@@ -203,18 +245,15 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxSize(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
             ) {
-                Text("Register", color = Color.White)
+                Text("Register", color = Color.White, fontWeight = FontWeight.Bold)
             }
         }
 
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(
-            onClick = { navController.navigate(ROUT_LOGIN) }
-        ) {
-            Text("Already have an account? Login")
+        // Login Link
+        TextButton(onClick = { navController.navigate(ROUT_LOGIN) }) {
+            Text("Already have an account? Login", color = Color.White)
         }
     }
 }
-
-
