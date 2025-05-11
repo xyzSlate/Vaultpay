@@ -2,7 +2,11 @@ package com.nicholas.vaultpay.ui.screens.confirmation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -10,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
@@ -19,69 +24,68 @@ fun ConfirmationScreen(
     recipient: String,
     amount: String
 ) {
-    // Content of the Confirmation Screen
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(Color(0xFFF5F7FA))
-            .padding(16.dp),
+            .padding(24.dp),
+
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Transaction Successful",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color(0xFF1A237E)
+            text = "✅ Transaction Successful",
+            style = MaterialTheme.typography.headlineMedium.copy(fontSize = 26.sp),
+            color = MaterialTheme.colorScheme.primary
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        // Transaction details
         Card(
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF0072FF)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp),
-            elevation = CardDefaults.cardElevation(8.dp)
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(8.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Column {
-                    Text("Amount Sent", color = Color.White.copy(alpha = 0.7f))
-                    Text(
-                        text = "Ksh $amount",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = Color.White
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Recipient: $recipient",
-                        color = Color.White.copy(alpha = 0.7f)
-                    )
-                }
+                    .padding(20.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            )
+            {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = "Success",
+                    tint = Color(0xFF4CAF50),
+                    modifier = Modifier.size(64.dp)
+                )
+                Text("Amount Sent", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+                Text("KSh $amount", style = MaterialTheme.typography.headlineSmall, color = Color(0xFF0072FF))
+                Text("Recipient: $recipient", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+                val date = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()).format(java.util.Date())
+                Text("Date: $date", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
-        // Back Button
         Button(
             onClick = {
-                navController.popBackStack() // Navigate back to the HomeScreen or previous screen
+                navController.navigate("home") {
+                    popUpTo("send_money") { inclusive = true }
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-                .padding(8.dp),
+                .height(48.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0072FF))
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text("Go to Home", style = MaterialTheme.typography.bodyLarge, color = Color.White)
+            Text("Back to Home", color = Color.White)
         }
     }
 }
@@ -89,5 +93,9 @@ fun ConfirmationScreen(
 @Preview(showBackground = true)
 @Composable
 fun ConfirmationScreenPreview() {
-    ConfirmationScreen(navController = rememberNavController(), recipient = "John Doe", amount = "500")
+    ConfirmationScreen(
+        navController = rememberNavController(),
+        recipient = "John Doe",
+        amount = "500"
+    )
 }

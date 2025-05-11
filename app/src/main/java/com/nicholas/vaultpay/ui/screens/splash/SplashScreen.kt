@@ -67,9 +67,7 @@ fun SplashScreen(navController: NavController) {
             painter = painterResource(id = R.drawable.backgroundimage1), // Replace with your actual image resource.  Make sure you add a suitable image to your res/drawable folder
             contentDescription = "Background",
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop, // Ensure the image fills the entire screen
-            // Use a ColorFilter to achieve the purple overlay.  This is approximate, you might need to fine-tune.
-            //colorFilter = ColorFilter.tint(Color.Purple.copy(alpha = 0.6f), blendMode = BlendMode.Multiply) //Old way of setting color filter
+            contentScale = ContentScale.Crop,
         )
 
         // 2. Content Column

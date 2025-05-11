@@ -41,6 +41,8 @@ android {
 }
 
 dependencies {
+
+
     // Compose and UI dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -50,6 +52,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation ("androidx.compose.material3:material3:1.0.0")
+
 
     // Testing
     testImplementation(libs.junit)
@@ -68,6 +72,10 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.9")
     implementation("androidx.navigation:navigation-runtime-ktx:2.8.9")
 
+
+
+
+
     //livedata
     implementation("androidx.compose.runtime:runtime-livedata:1.6.4")
     //Room
@@ -79,5 +87,6 @@ dependencies {
     implementation ("io.coil-kt:coil-compose:2.4.0")
 
 }
+
 
 

@@ -1,57 +1,102 @@
 package com.nicholas.vaultpay.ui.screens.transactions
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.nicholas.vaultpay.R
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.nicholas.vaultpay.R
 import com.nicholas.vaultpay.model.Transaction
+import com.nicholas.vaultpay.viewmodel.TransactionViewModel
+import kotlin.math.abs
 
 @Composable
-fun TransactionsScreen(navController: NavController) {
-    // Sample transactions
-    val transactions = listOf(
-        Transaction("John Doe", "-Ksh 500", "Sent", "04 May 2025"),
-        Transaction("Mpesa Top-up", "+Ksh 1,000", "Top-up", "03 May 2025"),
-        Transaction("Jane K.", "-Ksh 200", "Sent", "02 May 2025")
-    )
-    val backgroundImage: Painter = painterResource(id = R.drawable.backgroundimage1)
+fun TransactionsScreen(
+    navController: NavController,
+    viewModel: TransactionViewModel = viewModel()
+) {
+    LaunchedEffect(Unit) {
+        val date = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
 
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Transaction History",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color(0xFF1A237E)
+        // Sent Money example
+        val sentMoneyTransaction = Transaction(
+            title = "Sent to Jane",
+            amount = -500.0,
+            date = date,
+            recipientName = "Jane",
+            accountNumber = "12345678"
         )
+        viewModel.insert(sentMoneyTransaction)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Bill Payment example
+        val billPaymentTransaction = Transaction(
+            title = "Paid Electricity Bill",
+            amount = -2000.0,
+            date = date,
+            recipientName = "Kenya Power",
+            accountNumber = "KPLC-ACC-8899"
+        )
+        viewModel.insert(billPaymentTransaction)
+    }
 
-        // Using LazyColumn to display a list of transactions
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+    val transactions by viewModel.allTransactions.observeAsState(initial = emptyList())
+    val backgroundColor = Color(0xFF5C6BC0) // Soft purple background
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.backgroundimage1),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(backgroundColor.copy(alpha = 0.7f), Color.Black.copy(alpha = 0.4f))
+                    )
+                )
+        )
+        Spacer(modifier = Modifier.height(40.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            items(transactions) { transaction ->
-                TransactionCard(transaction)
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Text(
+                text = "Transaction History",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(transactions) { transaction ->
+                    TransactionCard(transaction)
+                }
             }
         }
     }
@@ -59,49 +104,55 @@ fun TransactionsScreen(navController: NavController) {
 
 @Composable
 fun TransactionCard(transaction: Transaction) {
+    val isPositive = transaction.amount >= 0
+    val amountColor = if (isPositive) Color(0xFF8E24AA) else Color(0xFFD81B60)
+    val symbol = if (isPositive) "+" else "-"
+
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF3E5F5)),
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
-            .padding(bottom = 8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+            .height(120.dp), // Increased height to fit the new content
+        elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Center
-            ) {
+            Column {
+                Text(
+                    text = transaction.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFF4A148C),
+                    fontWeight = FontWeight.Bold
+                )
                 Text(
                     text = transaction.date,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF616161)
+                    color = Color.DarkGray
                 )
             }
 
             Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.Center
+                horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = transaction.amount,
+                    text = "$symbol Ksh ${abs(transaction.amount)}",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color(0xFF0072FF)
+                    color = amountColor,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Account: ${transaction.accountNumber}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
                 )
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TransactionsScreenPreview() {
-    TransactionsScreen(navController = rememberNavController())
 }
